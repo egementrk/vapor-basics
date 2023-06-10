@@ -12,6 +12,7 @@ func routes(_ app: Application) throws {
     }
     
     // MARK: - Dynamic Routes
+    
     // /movies/dynamic
     app.get("movies", ":genre") { req async throws -> String in
         guard let genre = req.parameters.get("genre") else { throw Abort(.badRequest) }
@@ -35,4 +36,20 @@ func routes(_ app: Application) throws {
         }
         return "\(customerID)"
     }
+    
+    // MARK: - Working with Models
+    
+    // /movies
+    app.get("movies") { req async in
+        [Movie(title: "Batman Begins", year: 2005),
+        Movie(title: "The Batman", year: 2022),
+        Movie(title: "The Dark Knight Rises", year: 2012)]
+    }
+    
+    // MARK: - Post Method
+    app.post("movies") { req async throws in
+        let movie = try req.content.decode(Movie.self)
+        return movie
+    }
 }
+
