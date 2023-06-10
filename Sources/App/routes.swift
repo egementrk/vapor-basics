@@ -51,5 +51,33 @@ func routes(_ app: Application) throws {
         let movie = try req.content.decode(Movie.self)
         return movie
     }
+    
+    // MARK: - Query String
+    
+    // /hotels?sort=desc&search=houston
+    app.get("hotels") { req async throws in
+        let hotelQuery = try req.query.decode(HotelQuery.self)
+        print(hotelQuery)
+        return hotelQuery
+    }
+    
+    // MARK: - Route Groups
+    
+    let users = app.grouped("users")
+    
+    // /users
+    users.get { req async -> String in
+        return "Users"
+    }
+    
+    // /users/Int
+    users.get(":userId") { req async throws -> String in
+        guard let userId = req.parameters.get("userId") else { throw Abort(.badRequest) }
+        return "UserId: \(userId)"
+    }
+    
+    // /users/premium
+    users.get("premium") { req async -> String in
+        return "Premium"
+    }
 }
-
