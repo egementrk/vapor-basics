@@ -47,9 +47,9 @@ func routes(_ app: Application) throws {
     
     // /movies
     app.get("movies") { req async in
-        [Movie(title: "Batman Begins", year: 2005),
-         Movie(title: "The Batman", year: 2022),
-         Movie(title: "The Dark Knight Rises", year: 2012)]
+        [Movie(title: "Batman Begins", year: "2005"),
+         Movie(title: "The Batman", year: "2022"),
+         Movie(title: "The Dark Knight Rises", year: "2012")]
     }
     
     // MARK: - Post Method
@@ -110,4 +110,8 @@ func routes(_ app: Application) throws {
             }
         }
     }
+    
+    // MARK: - Controllers
+    
+    try app.register(collection: MoviesController())
 }

@@ -9,5 +9,5 @@ import Vapor
 
 struct Movie: Content {
     let title: String
-    let year: Int
+    let year: String
 }
