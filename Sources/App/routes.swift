@@ -5,7 +5,7 @@ func routes(_ app: Application) throws {
     app.get { req async in
         "It works!"
     }
-
+    
     // http://127.0.0.1:8080/hello
     app.get("hello") { req async -> String in
         "Hello, world!"
@@ -23,7 +23,7 @@ func routes(_ app: Application) throws {
     app.get("movies", ":genre", ":year") { req async throws -> String in
         
         guard let genre = req.parameters.get("genre"),
-        let year = req.parameters.get("year")
+              let year = req.parameters.get("year")
         else { throw Abort(.badRequest) }
         
         return "\(genre) Movies from \(year)"
@@ -37,13 +37,19 @@ func routes(_ app: Application) throws {
         return "\(customerID)"
     }
     
+    // MARK: - Body Streaming
+    
+    // Increases the streaming body collection limit to 500kb
+    app.routes.defaultMaxBodySize = "500kb"
+    
+    
     // MARK: - Working with Models
     
     // /movies
     app.get("movies") { req async in
         [Movie(title: "Batman Begins", year: 2005),
-        Movie(title: "The Batman", year: 2022),
-        Movie(title: "The Dark Knight Rises", year: 2012)]
+         Movie(title: "The Batman", year: 2022),
+         Movie(title: "The Dark Knight Rises", year: 2012)]
     }
     
     // MARK: - Post Method
@@ -57,7 +63,6 @@ func routes(_ app: Application) throws {
     // /hotels?sort=desc&search=houston
     app.get("hotels") { req async throws in
         let hotelQuery = try req.query.decode(HotelQuery.self)
-        print(hotelQuery)
         return hotelQuery
     }
     
@@ -65,9 +70,14 @@ func routes(_ app: Application) throws {
     
     let users = app.grouped("users")
     
-    // /users
+    // GET /users
     users.get { req async -> String in
         return "Users"
+    }
+    
+    // POST /users
+    users.post { req async -> String in
+        return "/users.post"
     }
     
     // /users/Int
@@ -79,5 +89,25 @@ func routes(_ app: Application) throws {
     // /users/premium
     users.get("premium") { req async -> String in
         return "Premium"
+    }
+    
+    // /films
+    app.group("films") { films in
+        films.on(.GET) { req async in
+            "app.group /films"
+        }
+        
+        // /films/:id
+        films.group(":id") { film in
+            
+            // GET
+            film.on(.GET) { req async in
+                "app.group get /film/:id \n \(req.parameters.get("id") ?? "id?")"
+            }
+            // POST
+            film.on(.POST) { req async in
+                "app.group post /film/:id \n \(req.parameters.get("id") ?? "id?")"
+            }
+        }
     }
 }
