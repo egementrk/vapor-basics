@@ -114,4 +114,6 @@ func routes(_ app: Application) throws {
     // MARK: - Controllers
     
     try app.register(collection: MoviesController())
+    
+    try app.register(collection: APIController())
 }
