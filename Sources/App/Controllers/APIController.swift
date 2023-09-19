@@ -23,6 +23,7 @@ struct APIController: RouteCollection {
     
     func postUser(request: Request) throws -> Response {
         let user = try request.content.decode(User.self)
+        print(user)
         return Response(status: .ok)
     }
 }
