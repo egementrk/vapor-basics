@@ -9,14 +9,20 @@ import Vapor
 
 struct APIController: RouteCollection {
     
-    func boot(routes: Vapor.RoutesBuilder) throws {
+    func boot(routes: RoutesBuilder) throws {
         let api = routes.grouped("api")
         api.get("users", use: getUsers)
+        api.post("users", use: postUser)
     }
     
-    func getUsers(request: Request) throws -> Response {
-        let users = [["name": "Egemen", "age": 22], ["name":"Alex", "age": 22]]
-        let data = try JSONSerialization.data(withJSONObject: users, options: .prettyPrinted)
-        return Response(status: .ok, body: Response.Body(data: data))
+    func getUsers(request: Request) throws -> [User] {
+        let users = [User(name: "James", age: 22, instrument: Instrument(type: .guitar, year: "1990")),
+                     User(name: "Dave", age: 22, instrument: nil)]
+        return users
+    }
+    
+    func postUser(request: Request) throws -> Response {
+        let user = try request.content.decode(User.self)
+        return Response(status: .ok)
     }
 }
